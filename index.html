@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXIS | AI SYSTEM</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;background:#030914;color:#bcefff;
+ font-family:Arial,sans-serif;display:flex;justify-content:center;
+ align-items:center;padding:20px;
+ background-image:radial-gradient(ellipse at center,#102b46 0%,#030914 70%);
+}
+main{width:100%;max-width:480px;text-align:center}
+.tag{letter-spacing:5px;color:#36dfff;font-size:12px}
+h1{font-size:38px;letter-spacing:9px;margin:12px 0}
+.status{font-size:12px;color:#70a9c4}
+.reactor{
+ width:220px;height:220px;margin:30px auto;position:relative;
+ display:grid;place-items:center;border:1px solid #17638b;
+ border-radius:50%;box-shadow:0 0 35px #0876a833,inset 0 0 30px #0876a833;
+}
+.reactor:before,.reactor:after{
+ content:"";position:absolute;border:2px solid #24cfff;
+ border-radius:50%;inset:15px;animation:spin 9s linear infinite;
+ border-top-color:transparent;border-bottom-color:transparent;
+}
+.reactor:after{inset:32px;animation-direction:reverse;animation-duration:5s;border-color:#17638b;border-left-color:transparent}
+.core{width:80px;height:80px;border-radius:50%;
+ background:radial-gradient(circle,#e8ffff,#26cfff 25%,#075080 65%,#03101e);
+ box-shadow:0 0 35px #20cfff;animation:pulse 2s infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.12);box-shadow:0 0 55px #20cfff}}
+.panel{border:1px solid #14506b;padding:16px;border-radius:12px;background:#071522}
+#log{height:150px;overflow:auto;text-align:left;font-size:14px;line-height:1.6}
+.controls{display:flex;gap:8px;margin-top:12px}
+input{min-width:0;flex:1;background:#030914;color:white;border:1px solid #17638b;border-radius:8px;padding:12px}
+button{background:#073c58;color:#c8f8ff;border:1px solid #20cfff;border-radius:8px;padding:12px;cursor:pointer}
+button:hover{background:#095477}
+small{display:block;margin-top:18px;color:#537e96}
+</style>
+</head>
+<body>
+<main>
+ <div class="tag">PERSONAL AI SYSTEM</div>
+ <h1>AXIS</h1>
+ <div class="status">● SYSTEM ONLINE — INTERFACE DEMO</div>
+ <div class="reactor"><div class="core"></div></div>
+ <section class="panel">
+  <div id="log" aria-live="polite">AXIS: Interface iniciada.<br>AXIS: Aguardando comando...</div>
+  <div class="controls">
+   <input id="msg" placeholder="Digite um comando..." autocomplete="off">
+   <button id="send">Enviar</button>
+   <button id="voice" aria-label="Falar">🎙️</button>
+  </div>
+ </section>
+ <small>AXIS INTERFACE // BUILD 001</small>
+</main>
+<script>
+const log=document.getElementById('log');
+const msg=document.getElementById('msg');
+function say(text){
+ log.innerHTML+=' <br><br>VOCÊ: '+msg.value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ log.innerHTML+='<br>AXIS: '+text;
+ log.scrollTop=log.scrollHeight;
+ msg.value='';
+}
+function send(){
+ const t=msg.value.trim().toLowerCase();
+ if(!t)return;
+ if(t.includes('hora'))say('Consulte o relógio do seu dispositivo.');
+ else if(t.includes('seu nome'))say('Meu nome é AXIS, seu assistente pessoal.');
+ else if(t.includes('olá')||t.includes('oi'))say('Olá! Sistemas de interface operacionais. Qual é o comando?');
+ else say('Esta é uma demonstração visual. A inteligência artificial real será conectada numa próxima etapa.');
+}
+document.getElementById('send').onclick=send;
+msg.addEventListener('keydown',e=>{if(e.key==='Enter')send()});
+document.getElementById('voice').onclick=()=>{
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){say('Reconhecimento de voz indisponível neste navegador.');return}
+ const rec=new SR();rec.lang='pt-BR';
+ rec.onresult=e=>{msg.value=e.results[0][0].transcript;send()};
+ rec.onerror=()=>say('Não foi possível reconhecer a voz. Verifique a permissão do microfone.');
+ rec.start();
+};
+</script>
+</body>
+</html>
